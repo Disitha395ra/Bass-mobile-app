@@ -42,6 +42,11 @@ export default {
                     "locationAlwaysAndWhenInUsePermission": "This app uses your location to show your position to customers."
                 }
             ]
-        ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "a4c91472-e400-4bd7-a8fa-1ae80281a6b4"
+            }
+        }
     }
 };
