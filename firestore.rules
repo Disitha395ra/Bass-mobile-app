@@ -1,0 +1,43 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Users collection ─────────────────────────────────────────────────────
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // ── Technicians collection ────────────────────────────────────────────────
+    // Any authenticated user can read (needed for search/profile view)
+    // Only the technician themselves can write their own profile
+    match /technicians/{technicianId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth != null && request.auth.uid == technicianId;
+    }
+
+    // ── Requests collection ───────────────────────────────────────────────────
+    // Customers can create job requests
+    // Both parties (customer & technician) can read and update their own requests
+    match /requests/{requestId} {
+      allow create: if request.auth != null;
+      allow read, update: if request.auth != null &&
+        (request.auth.uid == resource.data.userId ||
+         request.auth.uid == resource.data.technicianId);
+    }
+
+    // ── Reviews collection ────────────────────────────────────────────────────
+    // Anyone authenticated can read reviews (for profile rating display)
+    // Only authenticated users can create a review (one per request enforced in app)
+    // No updates or deletes allowed after submission
+    match /reviews/{reviewId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null
+        && request.auth.uid == request.resource.data.userId
+        && request.resource.data.rating is number
+        && request.resource.data.rating >= 1
+        && request.resource.data.rating <= 5;
+      allow update, delete: if false;
+    }
+  }
+}
