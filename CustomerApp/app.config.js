@@ -42,6 +42,11 @@ export default {
                     "locationAlwaysAndWhenInUsePermission": "This app uses your location to find nearby technicians."
                 }
             ]
-        ]
+        ],
+        "extra": {
+            "eas": {
+                "projectId": "a74a36d4-207f-41e3-913e-f12a77d422de"
+            }
+        }
     }
 };
